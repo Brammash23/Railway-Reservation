@@ -1,141 +1,156 @@
+
 #include <iostream>
-#include <mysql_driver.h>
-#include <mysql_connection.h>
-#include <cppconn/prepared_statement.h>
-#include <cppconn/exception.h>
-
 using namespace std;
-using namespace sql;
-
-class Passenger {
-private:
+class passenger
+{
+    private:
     int id;
     string name;
-    int price = 5000;
-    int seats = 20;
-    sql::Connection* conn;
+    int price=5000;
+    int seats=20;
+    
+    
+    public:
 
-public:
-    // Constructor to initialize database connection
-    Passenger() {
-        mysql::MySQL_Driver* driver;
-        driver = mysql::get_mysql_driver_instance();
-        conn = driver->connect("tcp://127.0.0.1:3306", "root", "password"); // Use your MySQL credentials
-        conn->setSchema("flightDB"); // Assuming your database is named "flightDB"
+    void setdata()
+    {
+        cout<<"Enter your Name:";
+        cin>>name;
+        cout<<"Enter Your Flight ID:";
+        cin>>id;
     }
-
-    // Destructor to close the connection
-    ~Passenger() {
-        delete conn;
+    string print()
+    {
+        return name;
     }
-
-    // Function to create passengers table
-    void initDB() {
-        Statement* stmt = conn->createStatement();
-        stmt->execute("CREATE TABLE IF NOT EXISTS Passengers ("
-                      "ID INT PRIMARY KEY, "
-                      "Name VARCHAR(255) NOT NULL);");
-        delete stmt;
+    
+    int idle()
+    {
+        return id;
     }
-
-    // Function to set passenger data and insert into DB
-    void setData() {
-        cout << "Enter your Name: ";
-        cin >> name;
-        cout << "Enter Your Flight ID: ";
-        cin >> id;
-
-        PreparedStatement* pstmt = conn->prepareStatement("INSERT INTO Passengers (ID, Name) VALUES (?, ?)");
-        pstmt->setInt(1, id);
-        pstmt->setString(2, name);
-        pstmt->execute();
-        delete pstmt;
-    }
-
-    // Function to show passenger data from the DB
-    void printAllPassengers() {
-        Statement* stmt = conn->createStatement();
-        ResultSet* res = stmt->executeQuery("SELECT * FROM Passengers");
-
-        while (res->next()) {
-            cout << "Name: " << res->getString("Name") << " -- ID: " << res->getInt("ID") << endl;
+    
+     int showprice(int count)
+    {
+        if(count>0)
+        {
+          return price+(count*200);    
         }
-
-        delete res;
-        delete stmt;
-    }
-
-    // Function to cancel a booking (delete entry)
-    void cancelBooking(string passengerName) {
-        PreparedStatement* pstmt = conn->prepareStatement("DELETE FROM Passengers WHERE Name = ?");
-        pstmt->setString(1, passengerName);
-        pstmt->execute();
-        delete pstmt;
-    }
-
-    // Function to calculate and display price
-    int showPrice(int count) {
-        if (count > 0) {
-            return price + (count * 200);
-        } else {
-            return price;
+        
+        else
+        {
+            return price*1;
         }
+      
     }
-
-    // Function to show available seats
-    int balanceSeat(int count) {
-        return seats - count;
+    
+    int balanceseat(int count)
+    {
+        
+       return seats-count; 
     }
+    
+     int reducedprice(int count)
+    {
+        if(count>0)
+        {
+          return price-(count*200);    
+        }
+        
+        else
+        {
+            return price*1;
+        }
+      
+    }
+    
+    int reducedseat(int can)
+    {
+        
+       return seats-can; 
+    }
+    
+     void printpass()
+    {
+        cout<<"Name:"<<name<<"--"<<"ID:"<<id<<endl;
+    }
+    
+    void deletedata(string h,int ij)
+    {
+      name=h;
+      id=ij;
+    }
+  
+    
 };
 
-int main() {
-    Passenger passenger;
-    passenger.initDB(); // Initialize the database and create the table
 
-    int count = 0, n, opt;
-    string passengerName;
 
-    while (opt != 4) {
-        cout << "1. BOOK 2. Cancel 3. Print 4. Exit" << endl;
-        cout << "Enter Your Choice: ";
-        cin >> opt;
-
-        switch (opt) {
-            case 1:
-                cout << "Price is: " << passenger.showPrice(count) << endl;
-                cout << "Remaining Seats: " << passenger.balanceSeat(count) << endl;
-                cout << "How many seats do you want to book?" << endl;
-                cin >> n;
-                for (int i = 0; i < n; ++i) {
-                    passenger.setData();
-                    count++;
-                    cout << "Price is: " << passenger.showPrice(count) << endl;
-                    cout << "Remaining Seats: " << passenger.balanceSeat(count) << endl;
-                }
-                break;
-
-            case 2:
-                cout << "Enter your Name to Cancel: ";
-                cin >> passengerName;
-                passenger.cancelBooking(passengerName);
-                count--;
-                cout << "Price after cancellation: " << passenger.showPrice(count) << endl;
-                cout << "Remaining Seats after cancellation: " << passenger.balanceSeat(count) << endl;
-                break;
-
-            case 3:
-                passenger.printAllPassengers();
-                break;
-
-            case 4:
-                cout << "Exiting..." << endl;
-                break;
-
-            default:
-                cout << "Invalid choice!" << endl;
-                break;
-        }
+int main()
+{
+    int count=0,q=0,ij,can=0;
+    string g,h;
+    int n;
+    int opt;
+    passenger nw[20],details;
+    while(opt!=4)
+    {
+     cout<<"1.BOOK 2.Cancel 3.Print 4.Exit"<<endl;
+     cout<<"Enter Your Choice:"<<endl;
+     cin>>opt;
+     
+     switch(opt)
+     {
+         case 1:
+         cout<<"Price is:"<<details.showprice(count)<<endl;
+         cout<<"Remaining is:"<<details.balanceseat(count)<<endl;
+         cout<<"How many Seats gonna book?"<<endl;
+         cin>>n;
+         for(int i=q;i<n+q;i++)
+         {
+            nw[i].setdata();
+            count++;
+            cout<<"Price is:"<<details.showprice(count)<<endl;
+            cout<<"Remaining is:"<<details.balanceseat(count)<<endl;
+         }
+         q=count;
+         
+         break;
+         
+         case 2:
+         cout<<"Enter your Name to Cancel:";
+         cin>>g;
+         for(int i=0;i<count;i++)
+         {
+             if(nw[i].print()==g)
+             {
+                 h=nw[i+1].print();
+                 ij=nw[i+1].idle();
+                 nw[i].deletedata(h,ij);
+                 count--;
+                 can++;
+             }
+         }
+         cout<<"Price is:"<<details.reducedprice(count)<<endl;
+         cout<<"Remaining is:"<<details.reducedseat(can)<<endl;
+         break;
+         
+         case 3:
+         for(int i=0;i<count;i++)
+         {
+             nw[i].printpass();
+         }
+          cout<<"Price is:"<<details.showprice(count)<<endl;
+          cout<<"Remaining is:"<<details.balanceseat(count)<<endl;
+          break;
+         
+        
+        
+     }
+        
     }
+ 
+    
 
+    
     return 0;
 }
